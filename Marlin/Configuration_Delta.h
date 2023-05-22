@@ -2205,7 +2205,7 @@
  *
  * View the current statistics with M78.
  */
-//#define PRINTCOUNTER
+#define PRINTCOUNTER
 #if ENABLED(PRINTCOUNTER)
   #define PRINTCOUNTER_SAVE_INTERVAL 60 // (minutes) EEPROM save interval during print
 #endif
@@ -3060,8 +3060,7 @@
 // Support for PCA9533 PWM LED driver
 //#define PCA9533
 
-/**
- * RGB LED / LED Strip Control
+/** RGB LED / LED Strip Control
  *
  * Enable support for an RGB LED connected to 5V digital pins, or
  * an RGB Strip connected to MOSFETs controlled by digital pins.

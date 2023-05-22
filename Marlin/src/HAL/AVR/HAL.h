@@ -19,18 +19,16 @@
  */
 #pragma once
 
-/**
- * HAL for Arduino AVR
- */
-
 #include "../shared/Marduino.h"
 #include "../shared/HAL_SPI.h"
 #include "fastio.h"
+#include "watchdog.h"
 #include "math.h"
 
 #ifdef USBCON
   #include <HardwareSerial.h>
 #else
+  #define HardwareSerial_h // Hack to prevent HardwareSerial.h header inclusion
   #include "MarlinSerial.h"
 #endif
 
@@ -166,7 +164,7 @@ typedef Servo hal_servo_t;
 #define strtof strtod
 
 // ------------------------
-// Free Memory Accessor
+// Class Utilities
 // ------------------------
 
 #pragma GCC diagnostic push
@@ -187,10 +185,6 @@ public:
 
   // Earliest possible init, before setup()
   MarlinHAL() {}
-
-  // Watchdog
-  static void watchdog_init()    IF_DISABLED(USE_WATCHDOG, {});
-  static void watchdog_refresh() IF_DISABLED(USE_WATCHDOG, {});
 
   static void init();          // Called early in setup()
   static void init_board() {}  // Called less early in setup()
@@ -235,7 +229,7 @@ public:
     SBI(DIDR0, ch);
   }
 
-  // Begin ADC sampling on the given channel. Called from Temperature::isr!
+  // Begin ADC sampling on the given channel
   static void adc_start(const uint8_t ch) {
     #ifdef MUX5
       ADCSRB = ch > 7 ? _BV(MUX5) : 0;

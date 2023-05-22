@@ -121,7 +121,7 @@
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD && IS_NEWPANEL
+#if IS_ULTRA_LCD && IS_NEWPANEL
 
   #define LCD_PINS_RS                          9  // E1       JP11-11
   #define LCD_PINS_ENABLE                      8  // E0       JP11-10
@@ -130,7 +130,7 @@
   #define LCD_PINS_D6                          5  // D5       JP11-6
   #define LCD_PINS_D7                          4  // D4       JP11-5
 
-  #if EITHER(VIKI2, miniVIKI)
+  #if ANY(VIKI2, miniVIKI)
     #define BEEPER_PIN                         8  // E0       JP11-10
 
     #define DOGLCD_A0                         40  // F2       JP2-2
@@ -163,7 +163,7 @@
 
   #endif
 
-#endif // HAS_WIRED_LCD && IS_NEWPANEL
+#endif // IS_ULTRA_LCD && IS_NEWPANEL
 
 #ifndef SDSS
   #define SDSS                                26  // B6 SDCS

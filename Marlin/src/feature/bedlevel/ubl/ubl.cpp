@@ -26,7 +26,7 @@
 
 #include "../bedlevel.h"
 
-unified_bed_leveling bedlevel;
+unified_bed_leveling ubl;
 
 #include "../../../MarlinCore.h"
 #include "../../../gcode/gcode.h"

@@ -307,9 +307,7 @@
 
 #elif ENABLED(ZONESTAR_LCD)
 
-  #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
-    #error "CAUTION! ZONESTAR_LCD on REARM requires wiring modifications. NB. ADCs are not 5V tolerant. See 'pins_RAMPS_RE_ARM.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
-  #endif
+  #error "CAUTION! ZONESTAR_LCD on REARM requires wiring modifications. NB. ADCs are not 5V tolerant. Comment out this line to continue."
 
 #elif IS_TFTGLCD_PANEL
 
@@ -351,7 +349,7 @@
     //#define SHIFT_EN_PIN                 P1_22  // (41)  J5-4 & AUX-4
   #endif
 
-  #if EITHER(VIKI2, miniVIKI)
+  #if ANY(VIKI2, miniVIKI)
     #define DOGLCD_CS                      P0_16  // (16)
     #define DOGLCD_A0                      P2_06  // (59) J3-8 & AUX-2
     #define DOGLCD_SCK                SD_SCK_PIN

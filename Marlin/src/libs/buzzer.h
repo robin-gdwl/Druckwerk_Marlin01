@@ -23,7 +23,7 @@
 
 #include "../inc/MarlinConfig.h"
 
-#if HAS_BEEPER
+#if USE_BEEPER
 
   #include "circularqueue.h"
 
@@ -62,6 +62,18 @@
       FORCE_INLINE static void invert() { TOGGLE(BEEPER_PIN); }
 
       /**
+       * @brief Turn off a digital PIN
+       * @details Alias of digitalWrite(PIN, LOW) using FastIO
+       */
+      FORCE_INLINE static void off() { WRITE(BEEPER_PIN, LOW); }
+
+      /**
+       * @brief Turn on a digital PIN
+       * @details Alias of digitalWrite(PIN, HIGH) using FastIO
+       */
+      FORCE_INLINE static void on() { WRITE(BEEPER_PIN, HIGH); }
+
+      /**
        * @brief Resets the state of the class
        * @details Brings the class state to a known one.
        */
@@ -78,20 +90,6 @@
         SET_OUTPUT(BEEPER_PIN);
         reset();
       }
-
-      /**
-       * @brief Turn on a digital PIN
-       * @details Alias of digitalWrite(PIN, HIGH) using FastIO
-       */
-      FORCE_INLINE static void on() { WRITE(BEEPER_PIN, HIGH); }
-
-      /**
-       * @brief Turn off a digital PIN
-       * @details Alias of digitalWrite(PIN, LOW) using FastIO
-       */
-      FORCE_INLINE static void off() { WRITE(BEEPER_PIN, LOW); }
-
-      static void click(const uint16_t duration) { on(); delay(duration); off(); }
 
       /**
        * @brief Add a tone to the queue
@@ -117,9 +115,9 @@
   // Buzz directly via the BEEPER pin tone queue
   #define BUZZ(d,f) buzzer.tone(d, f)
 
-#elif USE_MARLINUI_BUZZER
+#elif HAS_BUZZER
 
-  // Use MarlinUI for a buzzer on the LCD
+  // Buzz indirectly via the MarlinUI instance
   #include "../lcd/marlinui.h"
   #define BUZZ(d,f) ui.buzz(d,f)
 
@@ -131,5 +129,6 @@
 #endif
 
 #define ERR_BUZZ() BUZZ(400, 40);
+#define ATTN_BUZZ() do{ BUZZ(198, 404); BUZZ(4, 0); BUZZ(198, 404); }while(0)
 #define OKAY_BUZZ() do{ BUZZ(100, 659); BUZZ(10, 0); BUZZ(100, 698); }while(0)
 #define DONE_BUZZ(OK) do{ if (OK) OKAY_BUZZ(); else ERR_BUZZ(); }while(0)

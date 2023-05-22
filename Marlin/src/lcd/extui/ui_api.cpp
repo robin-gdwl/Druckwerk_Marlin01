@@ -169,7 +169,7 @@ namespace ExtUI {
   }
 
   void yield() {
-    if (!flags.printer_killed) thermalManager.task();
+    if (!flags.printer_killed) thermalManager.manage_heater();
   }
 
   void enableHeater(const extruder_t extruder) {
@@ -626,7 +626,7 @@ namespace ExtUI {
   }
 
   void setAxisMaxFeedrate_mm_s(const feedRate_t value, const axis_t axis) {
-    planner.set_max_feedrate((AxisEnum)axis, value);
+    planner.set_max_feedrate(axis, value);
   }
 
   void setAxisMaxFeedrate_mm_s(const feedRate_t value, const extruder_t extruder) {
@@ -644,7 +644,7 @@ namespace ExtUI {
   }
 
   void setAxisMaxAcceleration_mm_s2(const_float_t value, const axis_t axis) {
-    planner.set_max_acceleration((AxisEnum)axis, value);
+    planner.set_max_acceleration(axis, value);
   }
 
   void setAxisMaxAcceleration_mm_s2(const_float_t value, const extruder_t extruder) {
@@ -889,11 +889,11 @@ namespace ExtUI {
 
     #if HAS_MESH
 
-      bed_mesh_t& getMeshArray() { return bedlevel.z_values; }
-      float getMeshPoint(const xy_uint8_t &pos) { return bedlevel.z_values[pos.x][pos.y]; }
+      bed_mesh_t& getMeshArray() { return Z_VALUES_ARR; }
+      float getMeshPoint(const xy_uint8_t &pos) { return Z_VALUES(pos.x, pos.y); }
       void setMeshPoint(const xy_uint8_t &pos, const_float_t zoff) {
         if (WITHIN(pos.x, 0, (GRID_MAX_POINTS_X) - 1) && WITHIN(pos.y, 0, (GRID_MAX_POINTS_Y) - 1)) {
-          bedlevel.z_values[pos.x][pos.y] = zoff;
+          Z_VALUES(pos.x, pos.y) = zoff;
           TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
         }
       }
@@ -906,10 +906,12 @@ namespace ExtUI {
           if (x_target != current_position.x || y_target != current_position.y) {
             // If moving across bed, raise nozzle to safe height over bed
             feedrate_mm_s = Z_PROBE_FEEDRATE_FAST;
-            destination.set(current_position.x, current_position.y, Z_CLEARANCE_BETWEEN_PROBES);
+            destination = current_position;
+            destination.z = Z_CLEARANCE_BETWEEN_PROBES;
             prepare_line_to_destination();
             feedrate_mm_s = XY_PROBE_FEEDRATE;
-            destination.set(x_target, y_target);
+            destination.x = x_target;
+            destination.y = y_target;
             prepare_line_to_destination();
           }
           feedrate_mm_s = Z_PROBE_FEEDRATE_FAST;
@@ -1046,7 +1048,7 @@ namespace ExtUI {
   void coolDown() { thermalManager.cooldown(); }
 
   bool awaitingUserConfirm() {
-    return TERN0(HAS_RESUME_CONTINUE, wait_for_user) || TERN0(HOST_KEEPALIVE_FEATURE, getHostKeepaliveIsPaused());
+    return TERN0(HAS_RESUME_CONTINUE, wait_for_user) || getHostKeepaliveIsPaused();
   }
   void setUserConfirmed() { TERN_(HAS_RESUME_CONTINUE, wait_for_user = false); }
 
@@ -1082,23 +1084,15 @@ namespace ExtUI {
 
   // Simplest approach is to make an SRAM copy
   void onUserConfirmRequired(FSTR_P const fstr) {
-    #ifdef __AVR__
-      char msg[strlen_P(FTOP(fstr)) + 1];
-      strcpy_P(msg, FTOP(fstr));
-      onUserConfirmRequired(msg);
-    #else
-      onUserConfirmRequired(FTOP(fstr));
-    #endif
+    char msg[strlen_P(FTOP(fstr)) + 1];
+    strcpy_P(msg, FTOP(fstr));
+    onUserConfirmRequired(msg);
   }
 
   void onStatusChanged(FSTR_P const fstr) {
-    #ifdef __AVR__
-      char msg[strlen_P(FTOP(fstr)) + 1];
-      strcpy_P(msg, FTOP(fstr));
-      onStatusChanged(msg);
-    #else
-      onStatusChanged(FTOP(fstr));
-    #endif
+    char msg[strlen_P(FTOP(fstr)) + 1];
+    strcpy_P(msg, FTOP(fstr));
+    onStatusChanged(msg);
   }
 
   FileList::FileList() { refresh(); }

@@ -38,6 +38,7 @@ extern "C" volatile uint32_t _millis;
 #include "../shared/math_32bit.h"
 #include "../shared/HAL_SPI.h"
 #include "fastio.h"
+#include "watchdog.h"
 #include "MarlinSerial.h"
 
 #include <adc.h>
@@ -176,7 +177,7 @@ void flashFirmware(const int16_t);
 #define CPU_ST7920_DELAY_3 750
 
 // ------------------------
-// Free Memory Accessor
+// Class Utilities
 // ------------------------
 
 #pragma GCC diagnostic push
@@ -198,9 +199,9 @@ public:
   // Earliest possible init, before setup()
   MarlinHAL() {}
 
-  static void init();          // Called early in setup()
+  static void init();                 // Called early in setup()
   static void init_board() {}  // Called less early in setup()
-  static void reboot();        // Restart the firmware from 0x0
+  static void reboot();               // Restart the firmware from 0x0
 
   // Interrupts
   static bool isr_state() { return !__get_PRIMASK(); }
@@ -208,12 +209,6 @@ public:
   static void isr_off() { __disable_irq(); }
 
   static void delay_ms(const int ms) { _delay_ms(ms); }
-
-  // Watchdog
-  static void watchdog_init() IF_DISABLED(USE_WATCHDOG, {});
-  static void watchdog_refresh() IF_DISABLED(USE_WATCHDOG, {});
-  static bool watchdog_timed_out() IF_DISABLED(USE_WATCHDOG, { return false; });
-  static void watchdog_clear_timeout_flag() IF_DISABLED(USE_WATCHDOG, {});
 
   // Tasks, called from idle()
   static void idletask();
@@ -239,7 +234,7 @@ public:
     FilteredADC::enable_channel(pin);
   }
 
-  // Begin ADC sampling on the given pin. Called from Temperature::isr!
+  // Begin ADC sampling on the given pin
   static uint32_t adc_result;
   static void adc_start(const pin_t pin) {
     adc_result = FilteredADC::read(pin) >> (16 - HAL_ADC_RESOLUTION); // returns 16bit value, reduce to required bits

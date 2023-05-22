@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../Downloads/SKR-3-master/Firmware/SKR3-Marlin-bugfix-2.0.9.3.x"
+		}
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"activityBar.background": "#22320C",
+			"titleBar.activeBackground": "#304610",
+			"titleBar.activeForeground": "#F6FBF0"
+		}
+	}
+}

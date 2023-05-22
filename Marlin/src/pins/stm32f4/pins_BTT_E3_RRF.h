@@ -36,7 +36,7 @@
 
 // Onboard I2C EEPROM
 #define I2C_EEPROM
-#define MARLIN_EEPROM_SIZE 0x1000                 // 4K
+#define MARLIN_EEPROM_SIZE 0x1000                 // 4KB
 
 //
 // Servos
@@ -186,11 +186,11 @@
 /**
  *              BTT E3 RRF
  *                ------
- * (BEEPER)  PE8 | 1  2 | PE9  (BTN_ENC)
- * (BTN_EN1) PE7 | 3  4 | RESET
- * (BTN_EN2) PB2   5  6 | PE10 (LCD_D4)
- * (LCD_RS)  PB1 | 7  8 | PE11 (LCD_EN)
- *           GND | 9 10 | 5V
+ * (BEEPER)  PE8 |10  9 | PE9  (BTN_ENC)
+ * (BTN_EN1) PE7 | 8  7 | RESET
+ * (BTN_EN2) PB2   6  5 | PE10 (LCD_D4)
+ * (LCD_RS)  PB1 | 4  3 | PE11 (LCD_EN)
+ *           GND | 2  1 | 5V
  *                ------
  *                 EXP1
  */
@@ -211,45 +211,41 @@
 
     #if ENABLED(LCD_FOR_MELZI)
 
-      #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
-        #error "CAUTION! LCD_FOR_MELZI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
-      #endif
+      #error "CAUTION! LCD_FOR_MELZI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
 
      /** LCD_FOR_MELZI display pinout
       *
       *               BTT E3 RRF                                   Display Ribbon
       *                ------                                         ------
-      * (BEEPER)  PE8 | 1  2 | PE9  (BTN_ENC)                    GND |10  9 | 5V
-      * (BTN_EN1) PE7 | 3  4 | RESET                          BEEPER | 8  7 | ESTOP    (RESET)
-      * (BTN_EN2) PB2   5  6 | PE10 (LCD_D4)       (BTN_ENC) ENC_BTN | 6  5 | LCD_SCLK (LCD_D4)
-      * (LCD_RS)  PB1 | 7  8 | PE11 (LCD_EN)       (BTN_EN2) ENC_A   | 4  3 | LCD_DATA (LCD_EN)
-      *           GND | 9 10 | 5V                  (BTN_EN1) ENC_B   | 2  1 | LCD_CS   (LCD_RS)
+      * (BEEPER)  PE8 |10  9 | PE9  (BTN_ENC)                    GND |10  9 | 5V
+      * (BTN_EN1) PE7 | 8  7 | RESET                          BEEPER | 8  7 | ESTOP    (RESET)
+      * (BTN_EN2) PB2   6  5 | PE10 (LCD_D4)       (BTN_ENC) ENC_BTN | 6  5 | LCD_SCLK (LCD_D4)
+      * (LCD_RS)  PB1 | 4  3 | PE11 (LCD_EN)       (BTN_EN2) ENC_A   | 4  3 | LCD_DATA (LCD_EN)
+      *           GND | 2  1 | 5V                  (BTN_EN1) ENC_B   | 2  1 | LCD_CS   (LCD_RS)
       *                ------                                         ------
-      *                 EXP1                                           LCD
+      *                 EXP1                                          Ribbon
       *
       * Needs custom cable:
       *
       *    Board   Adapter   Display Ribbon (coming from display)
-      *  ----------------------------------
-      *  EXP1-10 ---------- LCD-9   5V
-      *  EXP1-9 ----------- LCD-10  GND
-      *  EXP1-8 ----------- LCD-3   LCD_EN
-      *  EXP1-7 ----------- LCD-1   LCD_RS
-      *  EXP1-6 ----------- LCD-5   LCD_D4
-      *  EXP1-5 ----------- LCD-4   EN2
-      *  EXP1-4 ----------- LCD-7   RESET
-      *  EXP1-3 ----------- LCD-2   EN1
-      *  EXP1-2 ----------- LCD-6   BTN
-      *  EXP1-1 ----------- LCD-8   BEEPER
+      *
+      *   EXP1-1 ----------- EXP1-9
+      *   EXP1-2 ----------- EXP1-10
+      *   EXP1-3 ----------- EXP1-3
+      *   EXP1-4 ----------- EXP1-1
+      *   EXP1-5 ----------- EXP1-5
+      *   EXP1-6 ----------- EXP1-4
+      *   EXP1-7 ----------- EXP1-7
+      *   EXP1-8 ----------- EXP1-8
+      *   EXP1-9 ----------- EXP1-6
+      *  EXP1-10 ----------- EXP1-8
       */
 
     #endif
 
   #elif ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-    #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
-      #error "CAUTION! ZONESTAR_LCD requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
-    #endif
+    #error "CAUTION! ZONESTAR_LCD requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
 
     #define LCD_PINS_RS                     PE10
     #define LCD_PINS_ENABLE                 PE9
@@ -277,37 +273,35 @@
 
     #if ENABLED(TFTGLCD_PANEL_SPI)
 
-      #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
-        #error "CAUTION! TFTGLCD_PANEL_SPI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
-      #endif
+      #error "CAUTION! TFTGLCD_PANEL_SPI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
 
       /**
        * TFTGLCD_PANEL_SPI display pinout
        *
        *                  Board                       Display
        *                  ------                       ------
-       * (SD_DET)    PE8 | 1  2 | PE9 (BEEPER)     5V |10  9 | GND
-       * (MOD_RESET) PE7 | 3  4 | RESET            -- | 8  7 | (SD_DET)
-       * (SD_CS)     PB2   5  6 | PE10        (MOSI)    6  5 | --
-       * (LCD_CS)    PB1 | 7  8 | PE11        (SD_CS) | 4  3 | (LCD_CS)
-       *             GND | 9 10 | 5V          (SCK)   | 2  1 | (MISO)
+       * (SD_DET)    PE8 |10  9 | PE9 (BEEPER)     5V |10  9 | GND
+       * (MOD_RESET) PE7 | 8  7 | RESET            -- | 8  7 | (SD_DET)
+       * (SD_CS)     PB2   6  5 | PE10        (MOSI)    6  5 | --
+       * (LCD_CS)    PB1 | 4  3 | PE11        (SD_CS) | 4  3 | (LCD_CS)
+       *             GND | 2  1 | 5V          (SCK)   | 2  1 | (MISO)
        *                  ------                       ------
        *                   EXP1                         EXP1
        *
        * Needs custom cable:
        *
        *    Board   Adapter   Display
-       *   ----------------------------------
-       *   EXP1-10 ---------- EXP1-10  5V
-       *   EXP1-9 ----------- EXP1-9   GND
-       *   SPI1-4 ----------- EXP1-6   MOSI
-       *   EXP1-7 ----------- n/c
-       *   SPI1-3 ----------- EXP1-2   SCK
-       *   EXP1-5 ----------- EXP1-4   SD_CS
-       *   EXP1-4 ----------- n/c
-       *   EXP1-3 ----------- EXP1-3   LCD_CS
-       *   SPI1-1 ----------- EXP1-1   MISO
-       *   EXP1-1 ----------- EXP1-7   SD_DET
+       *           _________
+       *   EXP1-1 ----------- EXP1-10
+       *   EXP1-2 ----------- EXP1-9
+       *   SPI1-4 ----------- EXP1-6
+       *   EXP1-4 ----------- FREE
+       *   SPI1-3 ----------- EXP1-2
+       *   EXP1-6 ----------- EXP1-4
+       *   EXP1-7 ----------- FREE
+       *   EXP1-8 ----------- EXP1-3
+       *   SPI1-1 ----------- EXP1-1
+       *  EXP1-10 ----------- EXP1-7
        */
 
       #define TFTGLCD_CS                    PE7
@@ -333,36 +327,34 @@
 
 #if BOTH(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
 
-  #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
-    #error "CAUTION! LCD_FYSETC_TFT81050 requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
-  #endif
+  #error "CAUTION! LCD_FYSETC_TFT81050 requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
 
   /** FYSETC TFT TFT81050 display pinout
    *
    *                  Board                          Display
    *                  ------                          ------
-   * (SD_DET)    PE8 | 1  2 | PE9 (BEEPER)        5V |10  9 | GND
-   * (MOD_RESET) PE7 | 3  4 | RESET            RESET | 8  7 | (SD_DET)
-   * (SD_CS)     PB2   5  6 | PE10           (MOSI)  | 6  5 | (LCD_CS)
-   * (LCD_CS)    PB1 | 7  8 | PE11           (SD_CS) | 4  3 | (MOD_RESET)
-   *             GND | 9 10 | 5V             (SCK)   | 2  1 | (MISO)
+   * (SD_DET)    PE8 |10  9 | PE9 (BEEPER)        5V |10  9 | GND
+   * (MOD_RESET) PE7 | 8  7 | RESET            RESET | 8  7 | (SD_DET)
+   * (SD_CS)     PB2   6  5 | PE10           (MOSI)  | 6  5 | (LCD_CS)
+   * (LCD_CS)    PB1 | 4  3 | PE11           (SD_CS) | 4  3 | (MOD_RESET)
+   *             GND | 2  1 | 5V             (SCK)   | 2  1 | (MISO)
    *                  ------                          ------
    *                   EXP1                            EXP1
    *
    * Needs custom cable:
    *
    *    Board   Adapter   Display
-   *   ----------------------------------
-   *   EXP1-10 ---------- EXP1-10  5V
-   *   EXP1-9 ----------- EXP1-9   GND
-   *   SPI1-4 ----------- EXP1-6   MOSI
-   *   EXP1-7 ----------- EXP1-5   LCD_CS
-   *   SPI1-3 ----------- EXP1-2   SCK
-   *   EXP1-5 ----------- EXP1-4   SD_CS
-   *   EXP1-4 ----------- EXP1-8   RESET
-   *   EXP1-3 ----------- EXP1-3   MOD_RST
-   *   SPI1-1 ----------- EXP1-1   MISO
-   *   EXP1-1 ----------- EXP1-7   SD_DET
+   *
+   *   EXP1-1 ----------- EXP1-10
+   *   EXP1-2 ----------- EXP1-9
+   *   SPI1-4 ----------- EXP1-6
+   *   EXP1-4 ----------- EXP1-5
+   *   SPI1-3 ----------- EXP1-2
+   *   EXP1-6 ----------- EXP1-4
+   *   EXP1-7 ----------- EXP1-8
+   *   EXP1-8 ----------- EXP1-3
+   *   SPI1-1 ----------- EXP1-1
+   *  EXP1-10 ----------- EXP1-7
    */
 
   #define CLCD_SPI_BUS                         1  // SPI1 connector

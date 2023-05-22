@@ -32,6 +32,7 @@
 #include "../shared/math_32bit.h"
 #include "../shared/HAL_SPI.h"
 #include "fastio.h"
+#include "watchdog.h"
 
 #include <stdint.h>
 
@@ -114,8 +115,8 @@ typedef Servo hal_servo_t;
 //
 // Interrupts
 //
-#define sei() interrupts()
-#define cli() noInterrupts()
+#define sei() noInterrupts()
+#define cli() interrupts()
 
 #define CRITICAL_SECTION_START()  const bool _irqon = hal.isr_state(); hal.isr_off()
 #define CRITICAL_SECTION_END()    if (_irqon) hal.isr_on()
@@ -175,13 +176,9 @@ public:
   // Earliest possible init, before setup()
   MarlinHAL() {}
 
-  // Watchdog
-  static void watchdog_init()    IF_DISABLED(USE_WATCHDOG, {});
-  static void watchdog_refresh() IF_DISABLED(USE_WATCHDOG, {});
-
-  static void init();          // Called early in setup()
-  static void init_board();    // Called less early in setup()
-  static void reboot();        // Restart the firmware
+  static void init();       // Called early in setup()
+  static void init_board(); // Called less early in setup()
+  static void reboot();     // Software reset
 
   // Interrupts
   static bool isr_state() { return !__get_PRIMASK(); }
@@ -212,7 +209,7 @@ public:
   // Called by Temperature::init for each sensor at startup
   static void adc_enable(const uint8_t ch) {}
 
-  // Begin ADC sampling on the given channel. Called from Temperature::isr!
+  // Begin ADC sampling on the given channel
   static void adc_start(const uint8_t ch) { adc_result = analogRead(ch); }
 
   // Is the ADC ready for reading?

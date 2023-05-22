@@ -35,12 +35,9 @@
 #include "../gcode/gcode.h"
 #include "../module/motion.h"
 #include "../module/planner.h"
+#include "../module/stepper.h"
 #include "../module/printcounter.h"
 #include "../module/temperature.h"
-
-#if HAS_EXTRUDERS
-  #include "../module/stepper.h"
-#endif
 
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   #include "bedlevel/bedlevel.h"
@@ -66,7 +63,7 @@
 
 #include "../lcd/marlinui.h"
 
-#if HAS_SOUND
+#if HAS_BUZZER
   #include "../libs/buzzer.h"
 #endif
 
@@ -101,7 +98,7 @@ fil_change_settings_t fc_settings[EXTRUDERS];
   #define _PMSG(L) L##_LCD
 #endif
 
-#if HAS_SOUND
+#if HAS_BUZZER
   static void impatient_beep(const int8_t max_beep_count, const bool restart=false) {
 
     if (TERN0(HAS_MARLINUI_MENU, pause_mode == PAUSE_MODE_PAUSE_PRINT)) return;
@@ -675,9 +672,8 @@ void resume_print(const_float_t slow_load_length/*=0*/, const_float_t fast_load_
 
   // If resume_position is negative
   if (resume_position.e < 0) unscaled_e_move(resume_position.e, feedRate_t(PAUSE_PARK_RETRACT_FEEDRATE));
-  #ifdef ADVANCED_PAUSE_RESUME_PRIME
-    if (ADVANCED_PAUSE_RESUME_PRIME != 0)
-      unscaled_e_move(ADVANCED_PAUSE_RESUME_PRIME, feedRate_t(ADVANCED_PAUSE_PURGE_FEEDRATE));
+  #if ADVANCED_PAUSE_RESUME_PRIME != 0
+    unscaled_e_move(ADVANCED_PAUSE_RESUME_PRIME, feedRate_t(ADVANCED_PAUSE_PURGE_FEEDRATE));
   #endif
 
   // Now all extrusion positions are resumed and ready to be confirmed
@@ -714,13 +710,9 @@ void resume_print(const_float_t slow_load_length/*=0*/, const_float_t fast_load_
 
   TERN_(HAS_FILAMENT_SENSOR, runout.reset());
 
-  #if ENABLED(DWIN_LCD_PROUI)
-    DWIN_Print_Resume();
-    HMI_ReturnScreen();
-  #else
-    ui.reset_status();
-    ui.return_to_status();
-  #endif
+  TERN(DWIN_LCD_PROUI, DWIN_Print_Resume(), ui.reset_status());
+  TERN_(HAS_MARLINUI_MENU, ui.return_to_status());
+  TERN_(DWIN_LCD_PROUI, HMI_ReturnScreen());
 }
 
 #endif // ADVANCED_PAUSE_FEATURE

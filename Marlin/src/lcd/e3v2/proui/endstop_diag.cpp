@@ -21,19 +21,15 @@
  */
 
 /**
- * DWIN Endstops diagnostic page for PRO UI
+ * DWIN End Stops diagnostic page for PRO UI
  * Author: Miguel A. Risco-Castillo (MRISCOC)
  * Version: 1.2.2
  * Date: 2022/02/24
  */
 
-#include "../../../inc/MarlinConfigPre.h"
-
-#if ENABLED(DWIN_LCD_PROUI)
-
 #include "dwin_defines.h"
 
-#if HAS_ESDIAG
+#if BOTH(DWIN_LCD_PROUI, HAS_ESDIAG)
 
 #include "endstop_diag.h"
 
@@ -71,7 +67,7 @@ void draw_es_state(const bool is_hit) {
 
 void ESDiagClass::Draw() {
   Title.ShowCaption(F("End-stops Diagnostic"));
-  DWINUI::ClearMainArea();
+  DWINUI::ClearMenuArea();
   Draw_Popup_Bkgd();
   DWINUI::Draw_Button(BTN_Continue, 86, 250);
   DWINUI::cursor.y = 80;
@@ -109,5 +105,4 @@ void ESDiagClass::Update() {
   DWIN_UpdateLCD();
 }
 
-#endif // HAS_ESDIAG
-#endif // DWIN_LCD_PROUI
+#endif // DWIN_LCD_PROUI && HAS_ESDIAG

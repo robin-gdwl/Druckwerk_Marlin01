@@ -66,13 +66,7 @@ class Probe {
 public:
 
   #if ENABLED(SENSORLESS_PROBING)
-    typedef struct {
-      #if HAS_DELTA_SENSORLESS_PROBING
-        bool x:1, y:1, z:1;
-      #else
-        bool z;
-      #endif
-    } sense_bool_t;
+    typedef struct { bool x:1, y:1, z:1; } sense_bool_t;
     static sense_bool_t test_sensitivity;
   #endif
 
@@ -83,8 +77,6 @@ public:
     #if EITHER(PREHEAT_BEFORE_PROBING, PREHEAT_BEFORE_LEVELING)
       static void preheat_for_probing(const celsius_t hotend_temp, const celsius_t bed_temp);
     #endif
-
-    static void probe_error_stop();
 
     static bool set_deployed(const bool deploy);
 
@@ -146,7 +138,7 @@ public:
 
   #else
 
-    static constexpr xyz_pos_t offset = xyz_pos_t(NUM_AXIS_ARRAY(0, 0, 0, 0, 0, 0)); // See #16767
+    static constexpr xyz_pos_t offset = xyz_pos_t(LINEAR_AXIS_ARRAY(0, 0, 0, 0, 0, 0)); // See #16767
 
     static bool set_deployed(const bool) { return false; }
 
@@ -196,15 +188,6 @@ public:
       }
     #endif
 
-    /**
-     * The nozzle is only able to move within the physical bounds of the machine.
-     * If the PROBE has an OFFSET Marlin may need to apply additional limits so
-     * the probe can be prevented from going to unreachable points.
-     *
-     * e.g., If the PROBE is to the LEFT of the NOZZLE, it will be limited in how
-     * close it can get the RIGHT edge of the bed (unless the nozzle is able move
-     * far enough past the right edge).
-     */
     static constexpr float _min_x(const xy_pos_t &probe_offset_xy=offset_xy) {
       return TERN(IS_KINEMATIC,
         (X_CENTER) - probe_radius(probe_offset_xy),
@@ -305,8 +288,7 @@ public:
   #if USE_SENSORLESS
     static void enable_stallguard_diag1();
     static void disable_stallguard_diag1();
-    static void set_offset_sensorless_adj(const_float_t sz);
-    static void refresh_largest_sensorless_adj();
+    static void set_homing_current(const bool onoff);
   #endif
 
 private:

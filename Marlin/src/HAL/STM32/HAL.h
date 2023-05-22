@@ -30,6 +30,7 @@
 #include "../shared/HAL_SPI.h"
 #include "fastio.h"
 #include "Servo.h"
+#include "watchdog.h"
 #include "MarlinSerial.h"
 
 #include "../../inc/MarlinConfigPre.h"
@@ -50,67 +51,57 @@
   #include <USBSerial.h>
   #include "../../core/serial_hook.h"
   typedef ForwardSerial1Class< decltype(SerialUSB) > DefaultSerial1;
-  extern DefaultSerial1 MSerialUSB;
+  extern DefaultSerial1 MSerial0;
 #endif
 
 #define _MSERIAL(X) MSerial##X
 #define MSERIAL(X) _MSERIAL(X)
 
-#if WITHIN(SERIAL_PORT, 1, 6)
+#if SERIAL_PORT == -1
+  #define MYSERIAL1 MSerial0
+#elif WITHIN(SERIAL_PORT, 1, 6)
   #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-#elif !defined(USBCON)
-  #error "SERIAL_PORT must be from 1 to 6."
-#elif SERIAL_PORT == -1
-  #define MYSERIAL1 MSerialUSB
 #else
-  #error "SERIAL_PORT must be from 1 to 6, or -1 for Native USB."
+  #error "SERIAL_PORT must be from 1 to 6. You can also use -1 if the board supports Native USB."
 #endif
 
 #ifdef SERIAL_PORT_2
-  #if WITHIN(SERIAL_PORT_2, 1, 6)
+  #if SERIAL_PORT_2 == -1
+    #define MYSERIAL2 MSerial0
+  #elif WITHIN(SERIAL_PORT_2, 1, 6)
     #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
-  #elif !defined(USBCON)
-    #error "SERIAL_PORT must be from 1 to 6."
-  #elif SERIAL_PORT_2 == -1
-    #define MYSERIAL2 MSerialUSB
   #else
-    #error "SERIAL_PORT_2 must be from 1 to 6, or -1 for Native USB."
+    #error "SERIAL_PORT_2 must be from 1 to 6. You can also use -1 if the board supports Native USB."
   #endif
 #endif
 
 #ifdef SERIAL_PORT_3
-  #if WITHIN(SERIAL_PORT_3, 1, 6)
+  #if SERIAL_PORT_3 == -1
+    #define MYSERIAL3 MSerial0
+  #elif WITHIN(SERIAL_PORT_3, 1, 6)
     #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
-  #elif !defined(USBCON)
-    #error "SERIAL_PORT must be from 1 to 6."
-  #elif SERIAL_PORT_3 == -1
-    #define MYSERIAL3 MSerialUSB
   #else
-    #error "SERIAL_PORT_3 must be from 1 to 6, or -1 for Native USB."
+    #error "SERIAL_PORT_3 must be from 1 to 6. You can also use -1 if the board supports Native USB."
   #endif
 #endif
 
 #ifdef MMU2_SERIAL_PORT
-  #if WITHIN(MMU2_SERIAL_PORT, 1, 6)
+  #if MMU2_SERIAL_PORT == -1
+    #define MMU2_SERIAL MSerial0
+  #elif WITHIN(MMU2_SERIAL_PORT, 1, 6)
     #define MMU2_SERIAL MSERIAL(MMU2_SERIAL_PORT)
-  #elif !defined(USBCON)
-    #error "SERIAL_PORT must be from 1 to 6."
-  #elif MMU2_SERIAL_PORT == -1
-    #define MMU2_SERIAL MSerialUSB
   #else
-    #error "MMU2_SERIAL_PORT must be from 1 to 6, or -1 for Native USB."
+    #error "MMU2_SERIAL_PORT must be from 1 to 6. You can also use -1 if the board supports Native USB."
   #endif
 #endif
 
 #ifdef LCD_SERIAL_PORT
-  #if WITHIN(LCD_SERIAL_PORT, 1, 6)
+  #if LCD_SERIAL_PORT == -1
+    #define LCD_SERIAL MSerial0
+  #elif WITHIN(LCD_SERIAL_PORT, 1, 6)
     #define LCD_SERIAL MSERIAL(LCD_SERIAL_PORT)
-  #elif !defined(USBCON)
-    #error "SERIAL_PORT must be from 1 to 6."
-  #elif LCD_SERIAL_PORT == -1
-    #define LCD_SERIAL MSerialUSB
   #else
-    #error "LCD_SERIAL_PORT must be from 1 to 6, or -1 for Native USB."
+    #error "LCD_SERIAL_PORT must be from 1 to 6. You can also use -1 if the board supports Native USB."
   #endif
   #if HAS_DGUS_LCD
     #define SERIAL_GET_TX_BUFFER_FREE() LCD_SERIAL.availableForWrite()
@@ -135,8 +126,6 @@
 // ------------------------
 // Types
 // ------------------------
-
-typedef double isr_float_t;   // FPU ops are used for single-precision, so use double for ISRs.
 
 #ifdef STM32G0B1xx
   typedef int32_t pin_t;
@@ -217,13 +206,9 @@ public:
   // Earliest possible init, before setup()
   MarlinHAL() {}
 
-  // Watchdog
-  static void watchdog_init()    IF_DISABLED(USE_WATCHDOG, {});
-  static void watchdog_refresh() IF_DISABLED(USE_WATCHDOG, {});
-
-  static void init();          // Called early in setup()
+  static void init();                 // Called early in setup()
   static void init_board() {}  // Called less early in setup()
-  static void reboot();        // Restart the firmware from 0x0
+  static void reboot();               // Restart the firmware from 0x0
 
   // Interrupts
   static bool isr_state() { return !__get_PRIMASK(); }
@@ -256,7 +241,7 @@ public:
   // Called by Temperature::init for each sensor at startup
   static void adc_enable(const pin_t pin) { pinMode(pin, INPUT); }
 
-  // Begin ADC sampling on the given pin. Called from Temperature::isr!
+  // Begin ADC sampling on the given channel
   static void adc_start(const pin_t pin) { adc_result = analogRead(pin); }
 
   // Is the ADC ready for reading?

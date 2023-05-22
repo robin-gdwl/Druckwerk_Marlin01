@@ -333,9 +333,9 @@ void DGUSScreenHandler::HandleManualMove(DGUS_VP_Variable &var, void *val_ptr) {
     if (filament_data.action == 0) { // Go back to utility screen
       #if HAS_HOTEND
         thermalManager.setTargetHotend(e_temp, ExtUI::extruder_t::E0);
-        #if HAS_MULTI_HOTEND
-          thermalManager.setTargetHotend(e_temp, ExtUI::extruder_t::E1);
-        #endif
+      #endif
+      #if HAS_MULTI_HOTEND
+        thermalManager.setTargetHotend(e_temp, ExtUI::extruder_t::E1);
       #endif
       GotoScreen(DGUSLCD_SCREEN_UTILITY);
     }
@@ -348,7 +348,7 @@ void DGUSScreenHandler::HandleManualMove(DGUS_VP_Variable &var, void *val_ptr) {
               thermalManager.setTargetHotend(e_temp, filament_data.extruder);
               break;
           #endif
-          #if HAS_MULTI_HOTEND
+          #if HAS_MULTI_EXTRUDER
             case VP_E1_FILAMENT_LOAD_UNLOAD:
               filament_data.extruder = ExtUI::extruder_t::E1;
               thermalManager.setTargetHotend(e_temp, filament_data.extruder);
@@ -413,10 +413,14 @@ bool DGUSScreenHandler::loop() {
 
     if (!booted && ELAPSED(ms, BOOTSCREEN_TIMEOUT)) {
       booted = true;
-      GotoScreen(TERN0(POWER_LOSS_RECOVERY, recovery.valid()) ? DGUSLCD_SCREEN_POWER_LOSS : DGUSLCD_SCREEN_MAIN);
-    }
-  #endif
 
+      if (TERN0(POWER_LOSS_RECOVERY, recovery.valid()))
+        GotoScreen(DGUSLCD_SCREEN_POWER_LOSS);
+      else
+        GotoScreen(DGUSLCD_SCREEN_MAIN);
+    }
+
+  #endif
   return IsScreenComplete();
 }
 

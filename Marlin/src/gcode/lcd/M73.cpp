@@ -42,7 +42,7 @@ void GcodeSuite::M73() {
 
   #if ENABLED(DWIN_LCD_PROUI)
 
-    DWIN_M73();
+    DWIN_Progress_Update();
 
   #else
 

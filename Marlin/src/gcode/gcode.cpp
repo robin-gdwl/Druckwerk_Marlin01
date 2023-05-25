@@ -36,6 +36,7 @@ GcodeSuite gcode;
 #include "queue.h"
 #include "../module/motion.h"
 
+
 #if ENABLED(PRINTCOUNTER)
   #include "../module/printcounter.h"
 #endif
@@ -743,7 +744,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       #endif
 
       #if HAS_BUZZER
-        case 300: M300(); break;                                  // M300: Play beep tone
+        //case 300: M300(); break;                                  // M300: Play beep tone
       #endif
 
       #if ENABLED(PIDTEMP)

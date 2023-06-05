@@ -48,7 +48,15 @@ void _man_probe_pt(const xy_pos_t &xy) {
     ui.wait_for_move = false;
     ui.synchronize();
     ui.manual_move.menu_scale = _MAX(PROBE_MANUALLY_STEP, MIN_STEPS_PER_SEGMENT / planner.settings.axis_steps_per_mm[0]); // Use first axis as for delta XYZ should always match
+    ui.wait_for_move = true;
     ui.goto_screen(lcd_move_z);
+    if (ui.use_click()) ui.goto_previous_screen();
+    float z_pos = current_position.z;
+    delta_height = delta_height - current_position.z;
+    ui.store_settings();
+    while (!ui.use_click()) {
+      ui.goto_previous_screen();}
+
   }
 }
 
@@ -104,9 +112,11 @@ void lcd_delta_settings() {
     TERN_(HAS_LEVELING, reset_bed_level()); // After changing kinematics bed-level data is no longer valid
     recalc_delta_settings();
   };
+
   START_MENU();
   BACK_ITEM(MSG_DELTA_CALIBRATE);
-  EDIT_ITEM(float52sign, MSG_DELTA_HEIGHT, &delta_height, delta_height - 10, delta_height + 10, _recalc_delta_settings);
+  ui.manual_move.menu_scale = _MAX(PROBE_MANUALLY_STEP, MIN_STEPS_PER_SEGMENT / planner.settings.axis_steps_per_mm[0]); // Use first axis as for delta XYZ should always match
+  EDIT_ITEM(float52sign, MSG_DELTA_HEIGHT, &delta_height, delta_height - 100, delta_height + 100, _recalc_delta_settings);
   #define EDIT_ENDSTOP_ADJ(LABEL,N) EDIT_ITEM_P(float43, PSTR(LABEL), &delta_endstop_adj.N, -5, 0, _recalc_delta_settings)
   EDIT_ENDSTOP_ADJ("Ex", a);
   EDIT_ENDSTOP_ADJ("Ey", b);
@@ -136,8 +146,9 @@ void menu_delta_calibrate() {
     #endif
   #endif
 
+  //EDIT_ITEM(float52sign, MSG_DELTA_HEIGHT, &delta_height, delta_height - 10, delta_height + 10, _recalc_delta_settings);
   SUBMENU(MSG_DELTA_SETTINGS, lcd_delta_settings);
-
+  
   #if ENABLED(DELTA_CALIBRATION_MENU)
     SUBMENU(MSG_AUTO_HOME, _lcd_delta_calibrate_home);
     if (all_homed) {
@@ -150,5 +161,10 @@ void menu_delta_calibrate() {
 
   END_MENU();
 }
+
+// void menu_delta_set_z() {
+//   END_MENU();
+// }
+
 
 #endif // HAS_MARLINUI_MENU && (DELTA_CALIBRATION_MENU || DELTA_AUTO_CALIBRATION)

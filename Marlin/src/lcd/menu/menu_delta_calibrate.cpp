@@ -50,12 +50,9 @@ void _man_probe_pt(const xy_pos_t &xy) {
     ui.manual_move.menu_scale = _MAX(PROBE_MANUALLY_STEP, MIN_STEPS_PER_SEGMENT / planner.settings.axis_steps_per_mm[0]); // Use first axis as for delta XYZ should always match
     ui.wait_for_move = true;
     ui.goto_screen(lcd_move_z);
-    if (ui.use_click()) ui.goto_previous_screen();
     float z_pos = current_position.z;
-    delta_height = delta_height - current_position.z;
-    ui.store_settings();
-    while (!ui.use_click()) {
-      ui.goto_previous_screen();}
+    //delta_height = delta_height - current_position.z;
+    ui.goto_screen(lcd_move_z);
 
   }
 }

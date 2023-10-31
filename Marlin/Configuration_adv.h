@@ -2749,7 +2749,7 @@
     #define Z_RSENSE          0.11
     #define Z_CHAIN_POS      -1
     //#define Z_INTERPOLATE  true
-    //#define Z_HOLD_MULTIPLIER 0.5
+    //#define Z_HOLD_MULTIPLIER 0.5x
   #endif
 
   #if AXIS_IS_TMC(Z2)

@@ -1,17 +1,29 @@
-<p align="center"><img src="buildroot/share/pixmaps/logo/marlin-outrun-nf-500.png" height="150" alt="MarlinFirmware's logo" /></p>
+
 
 <h1 align="center">Druckwerk.xyz custom Marlin 3D Printer Firmware</h1>
 
-Custom Fork of Marlin 3D print software for [Druckwerk.xyz](https://www.druckwerk.xyz) Delta clay printer using Bigtreetech SKR 3 and TMC2208 Stepper drivers. 
+Custom Fork of Marlin 3D print software for [Druckwerk.xyz](https://www.druckwerk.xyz) Delta clay printer using [Bigtreetech SKR 3](https://github.com/bigtreetech/SKR-3) and TMC2208 Stepper drivers. 
 
 Includes the following changes: 
 - Calibrate Z-Height menu to quickly set delta z-height reliably 
 - Disables motor-shutoff after printing to provent the heavy printhead from crashing into clay prints
 
-See [the latest commits](https://github.com/robin-gdwl/Druckwerk_Marlin01/commits/bugfix-2.0.x) for all changes.
-This Firmware is not in active development. 
+This Firmware is used on two different Printers, both upgraded with a [Bigtreetech SKR 3](https://github.com/bigtreetech/SKR-3)
+  - [deltatower.ch RTA 420](https://deltatower.ch/en/fdm-2/)
+  - [3D-WASP Delta 2040](https://www.3dwasp.com/en/)
 
-### Marlin Firmware Readme below
+**Hardware changes necessary:**
+- [TMC Connection error](https://github.com/bigtreetech/SKR-3/issues/13) fix 
+  - 1k Resistor soldered between CS and VDD Pin on SKR board 
+  - [solution post and image of location](https://www.reddit.com/r/BIGTREETECH/comments/ww980j/comment/irwc122/?utm_source=share&utm_medium=web2x&context=3)
+- For Delta Wasp LCD Controller:
+  - Connect EXP2 Reset Pin on Controller PCB to 3.3V pin on SKR Board
+
+See [the latest commits](https://github.com/robin-gdwl/Druckwerk_Marlin01/commits/bugfix-2.0.x) for all changes.
+This Firmware is not in active development. Use at your own risk
+
+### Marlin Firmware Readme:
+<p align="center"><img src="buildroot/share/pixmaps/logo/marlin-outrun-nf-500.png" height="150" alt="MarlinFirmware's logo" /></p>
 ___________
 
 <!-- <p align="center">
